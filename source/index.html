@@ -1,42 +1,79 @@
 ---
-layout: default
-navbar: Blog
+layout: page
+navbar: Home
+no_header: true
+footer: false
 ---
 
-<div class="row">
-  <div class="page-content {% unless site.default_asides == empty and site.blog_index_asides == empty %}col-md-9{% endunless %}">
-    <div class="blog-index">
-      {% assign index = true %}
-      {% for post in paginator.posts %}
-      {% assign content = post.content %}
-        <article class="post">
-          {% include article.html %}
-        </article>
-      {% endfor %}
-    </div>
+<h1>What do you keep in the cloud?</h1>
 
-    <ul class="pager">
-      {% if paginator.next_page %}
-        <li class="previous"><a href="{{paginator.next_page}}">&larr;&nbsp;Older</a></li>
-      {% else %}
-        <li class="previous disabled"><a href="#">&larr;&nbsp;Older</a></li>
-      {% endif %}
-      <li><a href="/blog/archives">Blog Archives</a></li>
-      {% if paginator.previous_page %}
-        <li class="next"><a href="{{paginator.previous_page}}">Newer&nbsp;&rarr;</a></li>
-      {% else %}
-        <li class="next disabled"><a href="#">Newer&nbsp;&rarr;</a></li>
-      {% endif %}
-    </ul>
-  </div>
+<p>Your private data should stay private. But if you keep it in the cloud,
+today, it isn't. Because "the cloud" is some computers in a data center
+somewhere. Some company owns those computers. And that company has employees
+with access to the computers.</p>
 
-  {% unless site.default_asides == empty and site.blog_index_asides == empty %}
-    <aside class="sidebar col-md-3">
-      {% if site.blog_index_asides.size %}
-        {% include_array blog_index_asides %}
-      {% else %}
-        {% include_array default_asides %}
-      {% endif %}
-    </aside>
-  {% endunless %}
-</div>
+<p>Hopefully the company has the ethics to keep your data safe and secure.
+Ethics was never the main characteristic that you would associate with companies,
+but they have a privacy policy. And hopefully none of the employees with access
+to your data would abuse their position.</p>
+
+<p>Unfortunately, it's not entirely up to the company and their employees. As
+recent events have shown, government officials can demand access to any data
+that anyone else is storing for you. And they can do it in secret, so you don't
+even know.</p>
+
+<p>Fog Cloud is a project to make sure that if you keep your data in the cloud,
+nobody else can read it unless <b>you</b> explicitly share it with them.</p>
+
+<h2>Your Address Book</h2>
+
+<p>It's amazing: When you get a new phone all of your contacts are already there.
+And the same contact list is shared with the webmail service you use. You probably
+don't have a paper address book anymore, instead the complete list of everyone
+you know how to get in touch with is stored electronically.</p>
+
+<p>Taking somebody's address book was always a classic surveillence move. There's
+no reason to let anyone do it without a warrant.</p>
+
+<h2>Your Email</h2>
+
+<p>No charge webmail has become ubiquitous. Not only does it let you read your
+email in any web browser or on any mobile device, it stores an archive of all the
+mail you've sent or recieved pretty much forever.</p>
+
+<p>Different people use email in different ways, but for many it's one of their
+primary forms of communication and organization, especially professionally. 
+Historically, the privacy of postal messages has been one of the most obvious
+requirements of private communication, and this applies no less strongly to
+email.</p>
+
+<h2>Your Instant Messages and Text Messages</h2>
+
+<p>Like email, these are written personal communication and should remain private
+both when sent and when archived.</p>
+
+<h2>Your Files</h2>
+
+<p>Your files are available on any computer you sit down at, automatically. Whether
+this is your masters thesis, your new business plan, or your Bitcoin wallet, there's
+no reason anyone should have access to your private files unless you want to share
+them.</p>
+
+<h2>Your Calendar</h2>
+
+<p>You want your phone to remind you that you have an appointment with the doctor
+tomorrow, but when you go to the doctor is none of anyone else's business.</p>
+
+<h2>Your Browser History and Bookmarks</h2>
+
+<p>Are you now or have you ever been a member of the Communist party? Have you read
+the Communist Manifesto? The right to read privately is as core to a free society as
+anything can be.</p>
+
+<h1>What is Fog Cloud?</h1>
+
+<p>You should be able to have access to all your data and communications across all
+of your devices without giving access to anyone else.</p>
+
+<p>Fog Cloud is a project to develop the software to make that at least a practical
+option.</p>

@@ -6,7 +6,7 @@ url: http://www.fogcloud.org
 title: Fog Cloud
 subtitle: Software 
 author: Nat Tuck
-simple_search: http://
+simple_search: http://www.duckduckgo.com/
 description:
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
@@ -64,10 +64,10 @@ default_asides: []
 # ----------------------- #
 
 # Github repositories
-github_user:
-github_repo_count: 0
+github_user: fogcloud
+github_repo_count: 4
 github_show_profile_link: true
-github_skip_forks: true
+github_skip_forks: false
 
 # Twitter
 twitter_user:

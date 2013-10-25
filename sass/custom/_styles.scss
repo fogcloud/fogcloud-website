@@ -18,3 +18,7 @@ html, body {
 footer[role=contentinfo] {
     height: 60px;
 }
+
+/* Make definition lists prettier */
+dt { margin-top: 1em; }
+dd { margin-left: 1em; }

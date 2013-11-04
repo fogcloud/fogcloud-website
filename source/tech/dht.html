@@ -1,0 +1,120 @@
+---
+layout: page
+navbar: Tech
+no_header: true
+footer: false
+---
+
+<h1>FogShare DHT</h1>
+
+<p>In order to coordinate synchronizing data on multiple machines, FogSync uses
+a distributed hash table based on Kademlia to store which machines store copies
+of which synchronized shares.</p>
+
+<h2>Node Address</h2>
+
+<p>Each node has an address, which is its public IP address and UDP port. IPv4
+addresses are stored in IPv6 format (::ffff:x.x.x.x), which means all DHT
+addresses are 144 bits. Separate DHTs are run for IPv4 and IPv6, but they
+should have the same data. (FIXME: How?)</p>
+
+<h2>Node IDs</h2>
+
+<p>Each node has a pseudorandom node ID that is generated using a Momentum-based 
+proof of work function in order to make Sybil attacks more difficult. The ID is
+a 256-bit value generated as follows:</p>
+
+<ol>
+  <li>Calculate A = sha512(node address)</li>
+  <li>Find B, C such that trunc(scrypt(A + B), M) == trunc(scrypt(A + C), M)</li>
+  <li>Repeat until D = sha512(A + B + C) has at least N leading 0's.</li>
+  <li>Your node ID is the last 256 bits of D.</li>
+</ol>
+
+<p>This generation function is tunable both by adjusting the parameters to
+scrypt and by adjusting the truncation length M to force the use of a set
+amount of memory, and adjusting the repeat factor N to make the whole process
+take the right amount of computation.</p>
+
+<p>Another node can check that you really jumped through this hoop comparitively
+cheaply from your node address and your B and C. If you don't verify, everyone
+else will ignore you.</p>
+
+<h2>Data IDs</h2>
+
+<p>Data stored in the table is identifed by its sha256 hash.</p>
+
+<h2>Node Distance</h2>
+
+<p>The distance between two Node IDs or a Node ID and a Data ID is defined by
+the XOR of the two IDs interpreted as a 256 bit unsigned integer. Smaller is
+closer.</p>
+
+<h2>Routing Table</h2>
+
+<p>Each node stores a routing table of known good nodes. This table is stored
+as a sequence of buckets. Each bucket contains nodes from some part of the ID
+space, identified by a bit prefix. When a bucket reaches it's maximum capacity
+K, either it's full and no new nodes will be added or - if its bit prefix
+matches that of the current node - it's split into two new buckets.</p>
+
+<p>The whole table should be checked periodically to make sure the nodes
+stay good.</p>
+
+<h2>Good Nodes</h2>
+
+<p>A node is good if it has responded to a query ever (it's not stuck behind a
+bad firewall) and there has been any message from the node in the past 15
+minutes (it's still up).</p>
+
+<h2>Messages</h2>
+
+<p>There are four basic messages in the protocal. Messages should fit in
+a 512-byte UDP packet.</p>
+
+<dl>
+  <dt>ping</dt>
+  <dd>
+    <p> Request:  [ping]
+    <br>Response: [pong, sender-Addr, responder-ID, responder-B, responder-C]</p>
+    <p>A ping message checks if a node is still up. Requester should
+       validate B and C. The inclusion of sender-Addr allows NATed nodes
+       to determine their external address.</p>
+  </dd>
+  <dt>find</dt>
+  <dd>
+    <p> Request:    [find, data-ID]
+    <br>Response A: [data, the-data]
+    <br>Response B: [look, [(node-ID, node-Addr]]</p>
+    <p>Find requests should only be sent to validated hosts. If the node has
+    the data, it should respond with it. Otherwise, it should respond with
+    the six nearest peers.</p>
+  </dd>
+  <dt>save</dt>
+  <dd>
+    <p> Request:  [save, the-data, N]
+    <br>Response: []
+  </dd>
+</dl>
+
+<h2>Query-Only Operation</h2>
+
+<p>Clients that are stuck behind a particularly obnoxious NAT or that are
+operating on limited battery power can query the network without acting as a
+storage node. To do this they just send requests and don't worry about storing
+a persistent routing table or responding to requests.</p>
+
+<h2>Normal Operation</h2>
+
+
+
+<h2>References</h2>
+
+<p>The BitTorrent DHT spec was especially useful in figuring out how a simple 
+Kademila-ish DHT wants to work.</p>
+
+<ul>
+  <li><a href="http://www.bittorrent.org/beps/bep_0005.html">BitTorrent DHT</a></li>
+  <li><a href="refs/maymounkov-kademlia-lncs.pdf">The Kademlia DHT</a></li>
+  <li><a href="refs/MomentumProofOfWork.pdf">Momentum Proof Of Work Functions</a></li>
+</ul>

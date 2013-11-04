@@ -89,24 +89,55 @@ a 512-byte UDP packet.</p>
     <p>Find requests should only be sent to validated hosts. If the node has
     the data, it should respond with it. Otherwise, it should respond with
     the six nearest peers.</p>
+    <p>Find should be repeated until you either get the data you want or
+    you perform K finds in a row without getting any closer peers.</p>
   </dd>
   <dt>save</dt>
   <dd>
-    <p> Request:  [save, the-data, N]
-    <br>Response: []
+    <p> Request:    [save, the-data, N]
+    <br>Response A: [done]
+    <br>Response B: [nope, reason]</p>
   </dd>
 </dl>
+<h2>Normal Operation</h2>
+
+<p>In normal operation, a client becomes a node by the following process:</p>
+
+<ul>
+  <li>Ping any node in the DHT, validate their ID.</li>
+  <li>Send several random "find" requests to get an initial node population.</li>
+  <li>Search for your node ID until you get K finds in a row without any closer
+  peers.</li>
+  <li>Validate each new node and insert into routing table as appropriate.</li>
+</ul>
+
+<p>Once you have a node population, you should perform the following update
+cycle every 15 minutes.</p>
+
+<ul>
+  <li>Ping each node in your routing table that hasn't responded since the
+  last cycle.</li>
+  <li>Perform a "find" on each piece of data that you have stored and move
+  it if there's a closer node.</li>
+  <li>Perform a "find" on your ID to discover closer nodes.</li>
+</ul>
+
+<p>When you get a ping request from a new node, you should ping them back,
+validate them, and add them to your routing table if they validate.</p>
 
 <h2>Query-Only Operation</h2>
 
 <p>Clients that are stuck behind a particularly obnoxious NAT or that are
 operating on limited battery power can query the network without acting as a
-storage node. To do this they just send requests and don't worry about storing
-a persistent routing table or responding to requests.</p>
+storage node. To do this they perform a limited version of the normal
+procedure:</p>
 
-<h2>Normal Operation</h2>
-
-
+<ul>
+  <li>Ping any node in the DHT, validate their ID.</li>
+  <li>Send a "find" request to that node for your query.</li>
+  <li>Repeat until you get the data.</li>
+  <li>Store all nodes that respond for future queries.</li>
+</ul>
 
 <h2>References</h2>
 

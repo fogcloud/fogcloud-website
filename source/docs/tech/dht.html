@@ -1,6 +1,6 @@
 ---
 layout: page
-navbar: Tech
+navbar: Docs
 no_header: true
 footer: false
 ---
@@ -72,33 +72,58 @@ minutes (it's still up).</p>
 <p>There are four basic messages in the protocal. Messages should fit in
 a 512-byte UDP packet.</p>
 
+<p>Each request has a Request ID, a randomly generated 128-bit value, that
+identifies the conversation. This ID is retained in responses, including
+an entire save/send/data/send/data sequence.</p>
+
 <dl>
   <dt>ping</dt>
   <dd>
-    <p> Request:  [ping]
-    <br>Response: [pong, sender-Addr, responder-ID, responder-B, responder-C]</p>
+    <p> Request:  [ping, req-id, version-no]
+    <br>Response: [pong, req-id, sender-Addr, responder-ID, responder-B, responder-C]</p>
     <p>A ping message checks if a node is still up. Requester should
        validate B and C. The inclusion of sender-Addr allows NATed nodes
        to determine their external address.</p>
   </dd>
   <dt>find</dt>
   <dd>
-    <p> Request:    [find, data-ID]
-    <br>Response A: [data, the-data]
-    <br>Response B: [look, [(node-ID, node-Addr]]</p>
+    <p> Request:    [find, req-id, data-ID]
+    <br>Response A: [here, req-id, data-ID]
+    <br>Response B: [look, req-id, [(node-ID, node-Addr]]</p>
     <p>Find requests should only be sent to validated hosts. If the node has
     the data, it should respond with it. Otherwise, it should respond with
     the six nearest peers.</p>
-    <p>Find should be repeated until you either get the data you want or
+    <p>Find should be repeated until you either the "here" message or
     you perform K finds in a row without getting any closer peers.</p>
+    <p>Once a requester gets a "here" message, they should make a "send"
+    request.</p>
   </dd>
   <dt>save</dt>
   <dd>
-    <p> Request:    [save, the-data, N]
-    <br>Response A: [done]
-    <br>Response B: [nope, reason]</p>
+    <p> Request:    [save, req-id, data-id, N]
+    <br>Response A: [nope, req-id, "reason"]
+    <br>Response B: [send, req-id, data-id, empty-bitmap]</p>
+    <p>When storing data to the DHT, once the closest node has been found,
+    a "save" request is sent. If the node agrees that it's the closest node
+    to the data-id, it'll reply with a "send" message.</p>
+  </dd>
+  <dt>send</dt>
+  <dd>
+    <p> Request:    [send, req-id, data-id, bitmap]
+    <br>Response A: [data, req-id, size, piece#, body] 
+    <br>Response B: [nope, req-id, "reason"]</p>
+    <p>Actual data transmission is requested by a "send" request. This
+    command indicates which pieces of a data the recipient still needs
+    in a bitfield. The recipient should send a data message for each
+    unsent piece in the bitfield.</p>
+    <p>The requester should resend the "send" request every 100ms or so
+    with the latest bitfield until it gets all the pieces of data, at
+    which point it should send a final "send" request with an empty
+    bitfield to indicate that it has recieved the entire block of 
+    data.</p>
   </dd>
 </dl>
+
 <h2>Normal Operation</h2>
 
 <p>In normal operation, a client becomes a node by the following process:</p>
@@ -138,6 +163,31 @@ procedure:</p>
   <li>Repeat until you get the data.</li>
   <li>Store all nodes that respond for future queries.</li>
 </ul>
+
+<h2>What To Store</h2>
+
+<p>Each user stores one record in the DHT, keyed by the SHA256 hash of their
+PGP key fingerprint.</p>
+
+<ul>
+  <li>User PGP Key (Mine is 12k)</li>
+  <li>Public Hosts (~ 20 bytes each)</li>
+  <li>Encrypted Private Hosts (~ 20 bytes each)</li>
+  <li>PGP Signature (~ 4k)</li>
+</ul>
+
+<p>This is sufficient information for new peers to bootstrap *if* they have
+the user's PGP keypair.</p>
+
+<p>A normal record should be about 18k, which means it'll take about 40 UDP
+packets to transmit.</p>
+
+<p>If each item is replicated 16 times and each user has one DHT node
+up constantly, then the expected data storage requirement for a node is 
+288k.</p>
+
+<p>The maximum record size of 64k leaves space for about 2k hosts per user
+which should be fine.</p>
 
 <h2>References</h2>
 

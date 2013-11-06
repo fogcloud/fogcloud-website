@@ -17,10 +17,13 @@
                 <li {% if page.navbar == 'Software' %}class="active"{% endif %}>
                     <a href="{{ root_url }}/software">Software</a>
                 </li>
+                <li {% if page.navbar == 'Docs' %}class="active"{% endif %}>
+                    <a href="{{ root_url }}/docs">Docs</a>
+                </li>
                 <li {% if page.navbar == 'Blog' %}class="active"{% endif %}>
                     <a href="{{ root_url }}/blog">Blog</a>
                 </li>
-                <li {% if page.navbar == 'Contact' %}class="active"{% endif %}>
+               <li {% if page.navbar == 'Contact' %}class="active"{% endif %}>
                     <a href="{{ root_url }}/contact">Contact</a>
                 </li>
             </ul>

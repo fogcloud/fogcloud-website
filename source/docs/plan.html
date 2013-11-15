@@ -1,0 +1,56 @@
+---
+layout: page
+navbar: Docs
+no_header: true
+footer: false
+---
+
+<h1>FogCloud Plan</h1>
+
+<h2>Step 1: Secure File Sync</h2>
+
+<p>The basic problem with cloud services is having your personal data stored on
+untrusted computers. The first component of the FogCloud system will be a
+secure file sync tool. This is useful itself as a replacement for tools like
+Bittorrent Sync and Dropbox.</p>
+
+<p>Further, it provides the basic common functionality needed to implement
+secure versions of all the other cloud services with shared local data.</p>
+
+<h2>Step 2: Address Book</h2>
+
+<p>Your address book can be stored as a directory of <a
+  href="http://en.wikipedia.org/wiki/VCard">vCard</a> or similar and then synced with
+the file sync tool.</p>
+
+<h2>Step 3: Email and IM</h2>
+
+<p>There are two problems here: Email delivery and syncing archived email. The
+second problem is solved trivially by storing it locally in files and then
+syncing it.</p>
+
+<p>Delivery is slightly more complicated. There are two cases:</p>
+
+<ol>
+
+  <li>Secure email should be delivered without revealing it. This requires a
+  FogCloud-to-FogCloud message protocol.</li>
+
+  <li>For insecure email, the best we can do is encrypt on receipt.</li>
+</ol>
+
+<p>IM isn't different from email for our purposes.</p>
+
+<p>This requires either new email apps for desktop and mobile, or the extension
+of existing programs to support our format for contacts and archive storage.</p>
+
+<h2>Step 4: Calendar, Browser Data</h2>
+
+<p>These can be stored as files and synced. A standard calendar file format is
+<a href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a>.</p>
+
+<h2>Step 5: Text Messages</h2>
+
+<p>This requires a phone app that reads text messages. They should be stored as
+IMs.</p>
+

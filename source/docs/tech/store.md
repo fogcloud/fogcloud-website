@@ -27,14 +27,20 @@ synchronized devices is stored in the DHT. This is called the SyncConfig.
 
 ## Cryptographic Primitives
 
-The Box primitive from DJB et al's NaCl library is used as the primary
-mechanism to encrypt and authenticate messages and data. This provides the
-semantics of public+secret key encryption and MAC authentication.
+FogSync is specified primarily based on the primitives from DJB et al's NaCl
+library. In addition, HMAC-SHA256 is abused in a couple of ways that are
+hopefully secure.
 
- - http://nacl.cr.yp.to/box.html 
- - http://godoc.org/code.google.com/p/go.crypto/nacl/box
+ - http://nacl.cr.yp.to
+ - http://godoc.org/code.google.com/p/go.crypto/nacl
 
-The NaCL Secretbox primitive is used to encrypt user SyncConfig.
+The NaCl Box primitive is used as the primary mechanism to encrypt and authenticate
+messages and data. This provides the semantics of public+secret key encryption
+and MAC authentication.
+
+The NaCl Secretbox primitive is used to encrypt user SyncConfig.
+
+XSalsa20 is used for data block encryption.
 
 HMAC-SHA256 is used for secure deterministic generation of IVs and file names.
 
@@ -58,9 +64,36 @@ securing communication between devices.
 
 ### Share Keys
 
-Each share has a "Box" keypair, used to encrypt and authenticate files.
-
+Each share has an XSalsa20 key, used to encrypt share data. 
 Each share has a HMAC-SHA512 key, used to generate IVs and file names.
+
+## Data Layouts
+
+### SyncConfig
+
+The following information is stored as encrypted gzipped JSON:
+
+ - User "Box" keypair.
+ - A list of devices with public key, trust status, and address.
+ - A list of shares, with share keys.
+
+### Share Metadata
+
+For each share, each device stores the following information:
+
+ - For each file, the history of all HMACs and timestamps.
+
+### Archive Data
+
+For each share, each archiving device stores old versions of each
+file in a store directory by their HMAC code.
+
+This archive is trimmed based on various heuristics to conserve
+disk space.
+
+### Untrusted Store
+
+Data and metadata are stored encrypted.
 
 ## Initial Setup
 
@@ -95,16 +128,37 @@ To add an untrusted device:
 
  - The user enters the address and key for the untrusted device into a
    trusted device.
- - The trusted device adds the untrusted device to the restore info.
+ - The trusted device adds the untrusted device to the SyncConfig.
+ - The trusted device gives the device list (public key, address) to
+   the untrusted device.
 
+## Sync Protocol Scenarios
 
+### File Updated Locally
 
-Each syncing device is
+When a file changes locally, the FogSync client performs the following
+procedure:
 
- - Either trusted or untrusted. Untrusted devices should never see
-   unencrypted data.
- - Either archiving or not archiving. Devices that are archiving
-   store old versions of files in an archive.
+ - Copy the file to cache.
+ - Gzip it.
+ - Construct a HMAC-SHA256 tree of 64k blocks.
+ - Encrypt the blocks with XSalsa20 (iv = block HMAC)
+ - Broadcast an update event.
+ - Send the file to an untrusted device, if any. 
+
+### Got an Update Event
+
+ - Download the file.
+ - If the existing version hasn't changed, copy in the new version.
+ - Else, conflict!
+
+### Data Request
+
+### Data
+
+## Sync Protocol
+
+### Event Log
 
 
 

@@ -54,7 +54,7 @@ devices to their FogSync setup. SHA256 is used to generate several
 deterministic values that are used for restore info:
  
  - The DHT key where the SyncConfig is stored. 
- - The Twofish key that encrypts the SyncConfig.
+ - The Salsa20 key that encrypts the SyncConfig.
  - The HMAC key to verify the SyncConfig.
 
 ### Device Keys

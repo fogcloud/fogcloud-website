@@ -28,10 +28,10 @@ a 256-bit value generated as follows:</p>
 data must be re-inserted relitively frequently to stay fresh.</p>
 
 <ol>
-  <li>Calculate A = sha512(current 64-bit Unix time)</li>
-  <li>Find B, C such that trunc(scrypt(A + B), M) == trunc(scrypt(A + C), M)</li>
-  <li>Repeat until D = sha512(A + B + C) has at least N leading 0's.</li>
-  <li>Your node ID is the last 256 bits of D.</li>
+  <li>Let T = sha512(current 64-bit Unix time).</li>
+  <li>Find A, B such that trunc(scrypt(T, A), M) == trunc(scrypt(T, B), M)</li>
+  <li>Repeat until C = sha512(A + B + T) has at least N leading 0's.</li>
+  <li>Your node ID is the last 256 bits of C.</li>
 </ol>
 
 <p>This generation function is tunable both by adjusting the parameters to

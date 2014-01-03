@@ -25,22 +25,31 @@ providing a P2P mesh network that helps establish connections and potentially
 even relay data.
 
 Each person who uses FogNet has a cryptographic key pair to identify themselves.
+The SHA256 hash of the public key is called the Person ID. 
 
 Each host on FogNet has a crytographic key pair, and the hash of the public key
-is used as a network identifier.
+is used as a network identifier. The SHA256 hash of the public key is called the
+Host ID.
 
 Each host that is currently actively connected to the network also has a
-temporary Node ID that determines its routing position in the network. This
-Node ID is generated using a moderately expensive proof of work function and
+temporary Mesh ID that determines its routing position in the network. This
+Mesh ID is generated using a moderately expensive proof of work function and
 must be regenerated periodically - this is to make Sybil attacks on the
 network harder.
 
-The mappings between Person to Hosts and Host to Node ID are stored in a DHT.
+The mappings between Person to Hosts and Host to Mesh ID are stored in a DHT.
 
 FogNet does a couple of basic things:
 
  - Maintains the mesh and DHT.
  - Provides high level communication functionality between hosts on the network.
 
+## Mesh Routing
 
+High level routing in FogNet takes place between Host IDs.
+
+Each host maintains a table of other active hosts on the network, such that
+
+ - There's a good distribution across the NodeID space.
+ - The standard DHT bucket distribution is covered.
 

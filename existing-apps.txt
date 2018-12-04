@@ -1,0 +1,15 @@
+
+== P2P File Sync
+
+https://syncthing.net/
+
+== Your server, but no in-place encryption
+
+https://owncloud.org/
+https://kolab.org/
+
+== Password Management
+
+http://www.passwordstore.org/
+https://github.com/zeapo/Android-Password-Store 
+https://qtpass.org/
